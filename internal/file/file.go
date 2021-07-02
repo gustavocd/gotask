@@ -3,7 +3,6 @@ package file
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"regexp"
 	"strconv"
@@ -12,17 +11,11 @@ import (
 	"github.com/gustavocd/gotask/internal/device"
 )
 
-// DeviceConfiguration represets a device's configuration parameters such as capacity, foreground and background tasks.
-type DeviceConfiguration struct {
-	Capacity int
-	Tasks    [][]device.Task
-}
-
 // ReadDeviceInputs reads devices' inputs from a file and transform them into DeviceConfiguration struct.
-func ReadDeviceInputs(name string) ([]DeviceConfiguration, error) {
+func ReadDeviceInputs(name string) ([]device.Configuration, error) {
 	file, err := os.Open(name)
 	if err != nil {
-		return nil, fmt.Errorf("could not open file %v", err)
+		return nil, err
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -36,59 +29,64 @@ func ReadDeviceInputs(name string) ([]DeviceConfiguration, error) {
 
 	defer file.Close()
 
-	var result [][]string
-	re := regexp.MustCompile("[0-9]+")
-	for i := range content {
-		if i%3 == 0 {
-			fTask := re.FindAllString(content[i+1], -1)
-			bTask := re.FindAllString(content[i+2], -1)
-			result = append(result, []string{content[i], strings.Join(fTask, " "), strings.Join(bTask, " ")})
-		}
-	}
-
-	var dc []DeviceConfiguration
-	for i := range result {
-		tasks, err := generateDeviceConfiguration(result[i][1], result[i][2])
-		if err != nil {
-			return nil, err
-		}
-
-		capacity, err := strconv.Atoi(result[i][0])
-		if err != nil {
-			return nil, err
-		}
-
-		dc = append(dc, DeviceConfiguration{capacity, tasks})
+	extractedTasks := extractTasksFromInputs(content)
+	dc, err := generateDeviceConfiguration(extractedTasks)
+	if err != nil {
+		return nil, err
 	}
 
 	return dc, nil
 }
 
-func generateDeviceConfiguration(foreground, background string) ([][]device.Task, error) {
-	var tasks [][]device.Task
-
-	fTasks, err := generateTasks(foreground)
-	if err != nil {
-		return nil, err
+func extractTasksFromInputs(content []string) [][]string {
+	var extractedTasks [][]string
+	re := regexp.MustCompile("[0-9]+")
+	for i := range content {
+		if i%3 == 0 {
+			fTask := re.FindAllString(content[i+1], -1)
+			bTask := re.FindAllString(content[i+2], -1)
+			extractedTasks = append(extractedTasks, []string{content[i], strings.Join(fTask, " "), strings.Join(bTask, " ")})
+		}
 	}
 
-	bTasks, err := generateTasks(background)
-	if err != nil {
-		return nil, err
-	}
-
-	tasks = append(tasks, fTasks, bTasks)
-
-	return tasks, nil
+	return extractedTasks
 }
 
-func generateTasks(tasksStr string) ([]device.Task, error) {
+func generateDeviceConfiguration(extractedTasks [][]string) ([]device.Configuration, error) {
+	var dc []device.Configuration
+
+	for i := range extractedTasks {
+		var tasks [][]device.Task
+
+		fTasks, err := parseTasks(extractedTasks[i][1])
+		if err != nil {
+			return nil, err
+		}
+
+		bTasks, err := parseTasks(extractedTasks[i][2])
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, fTasks, bTasks)
+
+		capacity, err := strconv.Atoi(extractedTasks[i][0])
+		if err != nil {
+			return nil, err
+		}
+
+		dc = append(dc, device.Configuration{Capacity: capacity, Tasks: tasks})
+	}
+
+	return dc, nil
+}
+
+func parseTasks(tasksStr string) ([]device.Task, error) {
 	var task device.Task
 	var tasks []device.Task
 
 	combinations := strings.Split(tasksStr, " ")
-	var i int
-	for i < len(combinations)-1 {
+	for i := range combinations {
 		if i%2 == 0 {
 			tID, err := strconv.Atoi(combinations[i])
 			if err != nil {
@@ -102,7 +100,6 @@ func generateTasks(tasksStr string) ([]device.Task, error) {
 			task.ResourceConsuption = tRc
 			tasks = append(tasks, task)
 		}
-		i++
 	}
 
 	return tasks, nil
