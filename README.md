@@ -1,4 +1,4 @@
-# gotask
+# gotask ![](https://github.com/gustavocd/gotask/workflows/GoTask%20Tests/badge.svg)
 
 Given a set of background tasks and a set of foreground tasks, a device is
 **optimally configured** when the device is loaded with a background task and a
