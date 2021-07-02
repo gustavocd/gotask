@@ -13,6 +13,12 @@ type Task struct {
 	ResourceConsuption int
 }
 
+// Configuration represets a device's configuration parameters such as capacity, foreground and background tasks.
+type Configuration struct {
+	Capacity int
+	Tasks    [][]Task
+}
+
 // ProduceCombinations produces the IDS for an optimally configured device.
 func ProduceCombinations(capacity int, foreground, background []Task) [][]int {
 	var result [][]int
@@ -53,7 +59,7 @@ func FormatCombinations(combinations [][][]int) string {
 		for i, comb := range combination {
 			var c string
 			if i == len(combination)-1 {
-				c = fmt.Sprintf("(%d, %d) ", comb[0], comb[1])
+				c = fmt.Sprintf("(%d, %d)", comb[0], comb[1])
 			} else {
 				c = fmt.Sprintf("(%d, %d), ", comb[0], comb[1])
 			}
