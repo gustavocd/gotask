@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
 
@@ -50,7 +49,7 @@ func run() error {
 	}
 
 	f := device.FormatCombinations(combinations)
-	err = os.WriteFile("./challenge.out", []byte(f), fs.FileMode(os.O_RDWR))
+	err = os.WriteFile("./challenge.out", []byte(f), 0777)
 	if err != nil {
 		return err
 	}
