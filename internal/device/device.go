@@ -9,11 +9,11 @@ import (
 
 // Task represents a single task to be optimized.
 type Task struct {
-	ID                 int
-	ResourceConsuption int
+	ID                  int
+	ResourceConsumption int
 }
 
-// Configuration represets a device's configuration parameters such as capacity, foreground and background tasks.
+// Configuration represents a device's configuration parameters such as capacity, foreground and background tasks.
 type Configuration struct {
 	Capacity int
 	Tasks    [][]Task
@@ -28,10 +28,10 @@ func ProduceCombinations(capacity int, foreground, background []Task) [][]int {
 
 	for _, fTask := range sortedForeground {
 		for _, bTask := range sortedBackground {
-			consuption := fTask.ResourceConsuption + bTask.ResourceConsuption
-			if consuption == capacity {
+			consumption := fTask.ResourceConsumption + bTask.ResourceConsumption
+			if consumption == capacity {
 				result = append(result, []int{fTask.ID, bTask.ID})
-			} else if consuption < capacity {
+			} else if consumption < capacity {
 				potentialIDs = [][]int{{fTask.ID, bTask.ID}}
 			}
 		}
@@ -46,7 +46,7 @@ func ProduceCombinations(capacity int, foreground, background []Task) [][]int {
 
 func sortByResource(tasks []Task) []Task {
 	sort.Slice(tasks, func(i, j int) bool {
-		return tasks[i].ResourceConsuption < tasks[j].ResourceConsuption
+		return tasks[i].ResourceConsumption < tasks[j].ResourceConsumption
 	})
 	return tasks
 }

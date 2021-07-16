@@ -19,7 +19,7 @@ make dev
 make test
 ```
 
-### See more available commads
+### See more available commands
 
 ```bash
 make help
@@ -28,7 +28,7 @@ make help
 ## Build binary for production
 
 This command will create a new binary called `gotask` inside `bin` folder, 
-and another inside foder `linux_amd64` for linux servers.
+and another inside folder `linux_amd64` for linux servers.
 
 ```bash
 make build

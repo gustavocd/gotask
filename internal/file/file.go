@@ -97,7 +97,7 @@ func parseTasks(tasksStr string) ([]device.Task, error) {
 			if err != nil {
 				return nil, err
 			}
-			task.ResourceConsuption = tRc
+			task.ResourceConsumption = tRc
 			tasks = append(tasks, task)
 		}
 	}
