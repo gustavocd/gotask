@@ -19,7 +19,7 @@ type Configuration struct {
 	Tasks    [][]Task
 }
 
-// ProduceCombinations produces the IDS for an optimally configured device.
+// ProduceCombinations produces the IDs for an optimally configured device.
 func ProduceCombinations(capacity int, foreground, background []Task) [][]int {
 	var result [][]int
 	var potentialIDs [][]int

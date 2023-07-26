@@ -3,7 +3,7 @@
 Given a set of background tasks and a set of foreground tasks, a device is
 **optimally configured** when the device is loaded with a background task and a
 foreground task whose **resource consumption** is equal to or as close as possible
-to the device’s **resource capacity** without surpassing it.
+to the device's **resource capacity** without surpassing it.
 
 ## Quick Start
 

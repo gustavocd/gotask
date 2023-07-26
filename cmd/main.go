@@ -18,8 +18,7 @@ var (
 
 func main() {
 	if err := run(); err != nil {
-		log.Printf("startup %v", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
